@@ -19,7 +19,7 @@ export const getMerchs = async (req, res) => {
       });
     } else {
       response = await Merch.findAll({
-        attributes: ["uuid", "name", "image", "url","price"],
+        attributes: ["uuid", "name", "image", "url", "price"],
         where: {
           userId: req.userId,
         },
@@ -80,7 +80,8 @@ export const getMerchById = async (req, res) => {
 };
 
 export const createMerch = async (req, res) => {
-  if (req.files === null) return res.status(400).json({ msg: "No file uploaded!" });
+  if (!req.files)
+    return res.status(400).json({ msg: "No file uploaded!" });
   const name = req.body.title;
   const price = req.body.price;
   const file = req.files.file;
@@ -100,10 +101,10 @@ export const createMerch = async (req, res) => {
     try {
       await Merch.create({
         name: name,
-        price: price,
         image: fileName,
+        price: price,
         url: url,
-        userId: req.userId,
+        userId: req.userId
       });
       res.status(201).json({ msg: "Merch berhasil dibuat" });
     } catch (error) {
@@ -121,7 +122,7 @@ export const updateMerch = async (req, res) => {
   if (!merch) return res.status(404).json({ msg: "Data tidak ditemukan!" });
   let fileName = "";
   if (req.files === null) {
-    fileName = merch.image;
+    fileName = Merch.image;
   } else {
     const file = req.files.file;
     const fileSize = file.data.length;
@@ -147,24 +148,24 @@ export const updateMerch = async (req, res) => {
   try {
     if (req.role === "admin") {
       await Merch.update(
-        { name: name, price: price, image: fileName, url: url },
+        { name: name, image: fileName, price: price, url: url },
         {
           where: {
-            id: merch.id,
+            id: req.params.id,
           },
         }
       );
     } else {
       if (req.userId !== merch.userId)
         return res.status(403).json({ msg: "Akses terlarang" });
-        await Merch.update(
-            { name: name, price: price, image: fileName, url: url },
-            {
-            where: {
-                [Op.and]: [{ id: merch.id }, { userId: req.userId }],
-            },
-            }
-        );
+      await Merch.update(
+        { name: name, image: fileName, price: price, url: url },
+        {
+          where: {
+            [Op.and]: [{ id: merch.id }, { userId: req.userId }],
+          },
+        }
+      );
     }
     res.status(200).json({ msg: "Merch berhasil diupdate" });
   } catch (error) {
@@ -185,7 +186,7 @@ export const deleteMerch = async (req, res) => {
       fs.unlinkSync(filepath);
       await Merch.destroy({
         where: {
-          id: merch.id,
+          id: req.params.id,
         },
       });
     } else {
@@ -195,7 +196,7 @@ export const deleteMerch = async (req, res) => {
       fs.unlinkSync(filepath);
       await Merch.destroy({
         where: {
-          [Op.and]: [{ id: merch.id }, { userId: req.userId }],
+          [Op.and]: [{ id:req.params.id }, { userId: req.userId }],
         },
       });
     }

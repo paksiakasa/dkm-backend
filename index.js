@@ -1,5 +1,5 @@
 import express from "express";
-import FileUpload from "express-fileupload";
+import fileUpload from "express-fileupload";
 import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
@@ -19,13 +19,13 @@ const store = new sessionStore({
     db: db
 });
 
-(async()=>{
-    await db.sync();
-})();
+// (async()=>{
+//     await db.sync();
+// })();
 
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESS_SECRET,
     resave: false,
     saveUninitialized: true,
     store: store,
@@ -37,16 +37,16 @@ app.use(session({
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000'
-}));
+})); 
 
 app.use(express.json());
-app.use(FileUpload());
+app.use(fileUpload());
 app.use(express.static("public"));
 app.use(UserRoute);
 app.use(MerchRoute);
 app.use(AuthRoute);
 
-store.sync();
+// store.sync();
 
 app.listen(process.env.APP_PORT, ()=>{
     console.log('Server up and running...');

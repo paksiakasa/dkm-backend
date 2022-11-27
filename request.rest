@@ -8,3 +8,15 @@ Content-Type: application/json
     "confPassword" : "123456",
     "role" : "admin"
 }
+
+###
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "name" : "Pak Man",
+    "email" : "pakman@gmail.com",
+    "password" : "123456",
+    "confPassword" : "123456",
+    "role" : "craftsman"
+}

@@ -21,35 +21,20 @@ const Merchs = db.define('merch', {
             len: [3, 100]
         }
     },
-    image:{
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate:{
-            notEmpty: true
-        }
-    },
-    url:{
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate:{
-            notEmpty: true
-        }
-    },
+    image:DataTypes.STRING,
+    url: DataTypes.STRING,
     price:{
-        type: DataTypes.NUMERIC,
+        type: DataTypes.DECIMAL,
         allowNull: false,
         validate:{
             notEmpty: true,
-            len: [10, 0]
-            
         }
     },
     userId:{
         type: DataTypes.INTEGER,
         allowNull: false,
         validate:{
-            notEmpty: true
-            
+            notEmpty: true 
         }
     }
 }, {
@@ -60,3 +45,7 @@ Users.hasMany(Merchs);
 Merchs.belongsTo(Users, {foreignKey: 'userId'});
 
 export default Merchs;
+
+(async()=>{
+    await db.sync();
+})();
