@@ -4,7 +4,7 @@ import Users from "./UserModel.js";
 
 const {DataTypes} = Sequelize;
  
-const Merchs = db.define('merch', {
+const Arts = db.define('art', {
     uuid:{
         type: DataTypes.STRING,
         defaultValue: DataTypes.UUIDV4,
@@ -14,7 +14,7 @@ const Merchs = db.define('merch', {
         }
     },
     name:DataTypes.STRING,
-    price:DataTypes.DECIMAL,
+    price: DataTypes.STRING,
     description: DataTypes.STRING,
     image: DataTypes.STRING,
     url: DataTypes.STRING,
@@ -29,7 +29,7 @@ const Merchs = db.define('merch', {
     freezeTableName: true
 });
 
-Users.hasMany(Merchs);
-Merchs.belongsTo(Users, {foreignKey: 'userId'});
+Users.hasMany(Arts);
+Arts.belongsTo(Users, {foreignKey: 'userId'});
 
-export default Merchs;
+export default Arts;

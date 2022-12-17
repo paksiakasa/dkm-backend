@@ -1,17 +1,28 @@
 import express from "express";
-import fileUpload from "express-fileupload";
+import FileUpload from "express-fileupload";
 import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
-import db from "./config/Database.js"; //kurang ArtRoute&EVENT
+import db from "./config/Database.js";
 import SequelizeStore from "connect-session-sequelize";
 import UserRoute from "./routes/UserRoute.js";
 import MerchRoute from "./routes/MerchRoute.js";
+import ArtRoute from "./routes/ArtRoute.js";
+import EventRoute from "./routes/EventRoute.js"
 import AuthRoute from "./routes/AuthRoute.js";
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+})); 
+
+app.use(express.json());
+app.use(FileUpload());
+app.use(express.static("public"));
 
 const sessionStore = SequelizeStore(session.Store);
 
@@ -34,16 +45,11 @@ app.use(session({
     }
 }))
 
-app.use(cors({
-    credentials: true,
-    origin: 'http://localhost:3000'
-})); 
 
-app.use(express.json());
-app.use(fileUpload());
-app.use(express.static("public"));
 app.use(UserRoute);
 app.use(MerchRoute);
+app.use(ArtRoute);
+app.use(EventRoute);
 app.use(AuthRoute);
 
 // store.sync();

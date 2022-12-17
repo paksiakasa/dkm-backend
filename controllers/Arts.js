@@ -1,14 +1,14 @@
-import Merch from "../models/MerchModel.js";
+import Art from "../models/ArtModel.js";
 import path from "path";
 import fs from "fs";
 import User from "../models/UserModel.js";
 import { Op } from "sequelize";
 
-export const getMerchs = async (req, res) => {
+export const getArts = async (req, res) => {
   try {
     let response;
     if (req.role === "admin") {
-      response = await Merch.findAll({
+      response = await Art.findAll({
         attributes: ["uuid", "name", "description", "price", "image", "url"],
         include: [
           {
@@ -18,7 +18,7 @@ export const getMerchs = async (req, res) => {
         ],
       });
     } else {
-      response = await Merch.findAll({
+      response = await Art.findAll({
         attributes: ["uuid", "name", "description", "price", "image", "url"],
         where: {
           userId: req.userId,
@@ -37,20 +37,20 @@ export const getMerchs = async (req, res) => {
   }
 };
 
-export const getMerchById = async (req, res) => {
+export const getArtById = async (req, res) => {
   try {
-    const merch = await Merch.findOne({
+    const art = await Art.findOne({
       where: {
         uuid: req.params.id,
       },
     });
-    if (!merch) return res.status(404).json({ msg: "Data tidak ditemukan!" });
+    if (!art) return res.status(404).json({ msg: "Data tidak ditemukan!" });
     let response;
     if (req.role === "admin") {
-      response = await Merch.findOne({
+      response = await Art.findOne({
         attributes: ["uuid", "name", "description", "price", "image", "url"],
         where: {
-          id: merch.id,
+          id: art.id,
         },
         include: [
           {
@@ -60,10 +60,10 @@ export const getMerchById = async (req, res) => {
         ],
       });
     } else {
-      response = await Merch.findOne({
+      response = await Art.findOne({
         attributes: ["uuid", "name", "description",  "price", "image", "url"],
         where: {
-          [Op.and]: [{ id: merch.id }, { userId: req.userId }],
+          [Op.and]: [{ id: art.id }, { userId: req.userId }],
         },
         include: [
           {
@@ -79,7 +79,7 @@ export const getMerchById = async (req, res) => {
   }
 };
 
-export const createMerch = (req, res) => {
+export const createArt = (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0)
     return res.status(400).json({ msg: "No file is uploaded!" });
   const name = req.body.title;
@@ -100,7 +100,7 @@ export const createMerch = (req, res) => {
   file.mv(`./public/images/${fileName}`, async (err) => {
     if (err) return res.status(500).json({ msg: err.message });
     try {
-      await Merch.create({
+      await Art.create({
         name: name,
         image: fileName,
         description: description,
@@ -108,25 +108,25 @@ export const createMerch = (req, res) => {
         url: url,
         userId: req.userId,
       });
-      res.status(201).json({ msg: "Merch berhasil dibuat" });
+      res.status(201).json({ msg: "Art berhasil dibuat" });
     } catch (error) {
       res.status(500).json({ msg: error.message });
     }
   });
 };
 
-export const updateMerch = async (req, res) => {
+export const updateArt = async (req, res) => {
   try {
-    const merch = await Merch.findOne({
+    const art = await Art.findOne({
       where: {
         uuid: req.params.id,
       },
     });
-    if (!merch) return res.status(404).json({ msg: "Data tidak ditemukan" });
+    if (!art) return res.status(404).json({ msg: "Data tidak ditemukan" });
     if (req.role === "admin") {
       let fileName = "";
       if (!req.files) {
-        fileName = merch.image;
+        fileName = art.image;
       } else {
         const file = req.files.file;
         const fileSize = file.data.length;
@@ -139,7 +139,7 @@ export const updateMerch = async (req, res) => {
         if (fileSize > 5000000)
           return res.status(422).json({ msg: "Image must be less than 5 MB" });
 
-        const filepath = `./public/images/${merch.image}`;
+        const filepath = `./public/images/${art.image}`;
         fs.unlinkSync(filepath);
 
         file.mv(`./public/images/${fileName}`, (err) => {
@@ -151,7 +151,7 @@ export const updateMerch = async (req, res) => {
         const price = req.body.title2;
         const url = `${req.protocol}://${req.get("host")}/images/${fileName}`;
         try {
-          await Merch.update(
+          await Art.update(
             { name: name, description: description, price: price, image: fileName,  url: url },
             {
               where: {
@@ -163,11 +163,11 @@ export const updateMerch = async (req, res) => {
           console.log(error.message);
         }
     } else {
-      if (req.userId !== merch.userId)
+      if (req.userId !== art.userId)
         return res.status(403).json({ msg: "Akses terlarang" });
         let fileName = "";
         if(!req.files){
-            fileName = merch.image
+            fileName = art.image
         } else{
             const file = req.files.file;
             const fileSize = file.data.length;
@@ -178,7 +178,7 @@ export const updateMerch = async (req, res) => {
             if(!allowedType.includes(ext.toLowerCase())) return res.status(422).json({msg: "Invalid Images"});
             if(fileSize > 5000000) return res.status(422).json({msg: "Image must be less than 5 MB"});
     
-            const filepath = `./public/images/${merch.image}`;
+            const filepath = `./public/images/${art.image}`;
             fs.unlinkSync(filepath);
     
             file.mv(`./public/images/${fileName}`, (err)=>{
@@ -190,7 +190,7 @@ export const updateMerch = async (req, res) => {
           const price = req.body.title2;
           const url = `${req.protocol}://${req.get("host")}/images/${fileName}`;
           try {
-            await Merch.update(
+            await Art.update(
               { name: name, description: description, price: price, image: fileName,  url: url },
               {
                 where: {
@@ -208,34 +208,34 @@ export const updateMerch = async (req, res) => {
   }
 };
 
-export const deleteMerch = async (req, res) => {
+export const deleteArt = async (req, res) => {
   try {
-    const merch = await Merch.findOne({
+    const art = await Art.findOne({
       where: {
         uuid: req.params.id,
       },
     });
-    if (!merch) return res.status(404).json({ msg: "Data tidak ditemukan!" });
+    if (!art) return res.status(404).json({ msg: "Data tidak ditemukan!" });
     if (req.role === "admin") {
-      const filepath = `./public/images/${merch.image}`;
+      const filepath = `./public/images/${art.image}`;
       fs.unlinkSync(filepath);
-      await Merch.destroy({
+      await Art.destroy({
         where: {
-          id: merch.id,
+          id: art.id,
         },
       });
     } else {
-      if (req.userId !== merch.userId)
+      if (req.userId !== art.userId)
         return res.status(403).json({ msg: "Akses terlarang" });
-      const filepath = `./public/images/${merch.image}`;
+      const filepath = `./public/images/${art.image}`;
       fs.unlinkSync(filepath);
-      await Merch.destroy({
+      await Art.destroy({
         where: {
-          [Op.and]: [{ id: merch.id }, { userId: req.userId }],
+          [Op.and]: [{ id: art.id }, { userId: req.userId }],
         },
       });
     }
-    res.status(200).json({ msg: "Merch berhasil dihapus" });
+    res.status(200).json({ msg: "Art berhasil dihapus" });
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }
