@@ -22,7 +22,7 @@ const Merchs = db.define('merch', {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate:{
-            notEmpty: true 
+            notEmpty: false 
         }
     }
 }, {

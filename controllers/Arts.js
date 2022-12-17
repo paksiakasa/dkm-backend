@@ -216,7 +216,7 @@ export const deleteArt = async (req, res) => {
       },
     });
     if (!art) return res.status(404).json({ msg: "Data tidak ditemukan!" });
-    if (req.role === "admin") {
+    if (req.role === "admin" || req.role === "artist") {
       const filepath = `./public/images/${art.image}`;
       fs.unlinkSync(filepath);
       await Art.destroy({

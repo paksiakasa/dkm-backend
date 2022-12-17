@@ -44,7 +44,7 @@ export const getMerchById = async (req, res) => {
         uuid: req.params.id,
       },
     });
-    if (!merch) return res.status(404).json({ msg: "Data tidak ditemukan!" });
+    if (!merch) return res.status(404).json({ msg: "Data tidak ditemukan!"});
     let response;
     if (req.role === "admin") {
       response = await Merch.findOne({
@@ -216,7 +216,7 @@ export const deleteMerch = async (req, res) => {
       },
     });
     if (!merch) return res.status(404).json({ msg: "Data tidak ditemukan!" });
-    if (req.role === "admin") {
+    if (req.role === "admin" || req.role === "craftsman") {
       const filepath = `./public/images/${merch.image}`;
       fs.unlinkSync(filepath);
       await Merch.destroy({

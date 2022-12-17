@@ -212,7 +212,7 @@ export const getEvents = async (req, res) => {
         },
       });
       if (!event) return res.status(404).json({ msg: "Data tidak ditemukan!" });
-      if (req.role === "admin") {
+      if (req.role === "admin" || req.role === "curator") {
         const filepath = `./public/images/${event.image}`;
         fs.unlinkSync(filepath);
         await Event.destroy({

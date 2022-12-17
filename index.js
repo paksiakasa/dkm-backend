@@ -10,6 +10,9 @@ import MerchRoute from "./routes/MerchRoute.js";
 import ArtRoute from "./routes/ArtRoute.js";
 import EventRoute from "./routes/EventRoute.js"
 import AuthRoute from "./routes/AuthRoute.js";
+import MerchMainRoute from "./routes/MerchMainRoute.js";
+import ArtMainRoute from "./routes/ArtMainRoute.js";
+import EventMainRoute from "./routes/EventMainRoute.js";
 
 dotenv.config();
 
@@ -48,9 +51,14 @@ app.use(session({
 
 app.use(UserRoute);
 app.use(MerchRoute);
+app.use(MerchMainRoute)
 app.use(ArtRoute);
+app.use(ArtMainRoute);
 app.use(EventRoute);
+app.use(EventMainRoute);
 app.use(AuthRoute);
+
+
 
 // store.sync();
 
